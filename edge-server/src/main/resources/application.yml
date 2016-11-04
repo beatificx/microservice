@@ -25,5 +25,9 @@ zuul:
   ignoredServices: "*"
   prefix: /api
   routes:
-    composite-service: /product/**
-    POINT-SERVICE: /point/**
+    product-service: 
+      path: /product/**
+    point-service: 
+      path: /point/**
+    composite-service:
+      path:  /composite/**

@@ -1,4 +1,4 @@
-package org.beatific.microservice.point;
+package org.beatific.microservice.product;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,9 +8,9 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @EnableDiscoveryClient
 @ComponentScan
-public class PointServiceApplication {
+public class ProductServiceApplication {
 	
 	public static void main(String[] args) {
-		SpringApplication.run(PointServiceApplication.class, args);
+		SpringApplication.run(ProductServiceApplication.class, args);
 	}
 }

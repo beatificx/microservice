@@ -1,4 +1,4 @@
-package org.beatific.microservice.point.service;
+package org.beatific.microservice.product.service;
 
 import org.springframework.data.annotation.Id;
 
@@ -7,11 +7,11 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class Point {
+public class Product {
 
 	@Id
 	private final Long id;
 	private String name;
-	private Long point;
+	private Long price;
 
 }
