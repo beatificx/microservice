@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductService {
 	
 	@RequestMapping("/get")
-    public Product reduce() {
-		return new Product(1L, "tv", 100L);
+    public Product get() {
+		return new Product(1L, "tv", 1000L);
     }
 }

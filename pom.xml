@@ -15,12 +15,13 @@
 		<module>config-server</module>
 		<module>point</module>
 		<module>product</module>
+		<module>composite</module>
 	</modules>
 	
 	<parent>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-starter-parent</artifactId>
-        <version>Brixton.BUILD-SNAPSHOT</version>
+        <version>Brixton.RELEASE</version>
         <relativePath/>
     </parent>
 
@@ -51,7 +52,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-starter-parent</artifactId>
-                <version>Brixton.BUILD-SNAPSHOT</version>
+                <version>Brixton.RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
