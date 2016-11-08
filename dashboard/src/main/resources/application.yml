@@ -1,0 +1,19 @@
+endpoints:
+  restart:
+    enabled: true
+  shutdown:
+    enabled: true
+
+server:
+  port: 7070
+
+logging:
+  level:
+    ROOT: INFO
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    instance:
+      preferIpAddress: true

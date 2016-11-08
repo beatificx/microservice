@@ -20,7 +20,12 @@ endpoints:
     enabled: true
   health:
     sensitive: false
-    
+
+security:
+  oauth2:
+    resource:
+      userInfoUri: https://localhost:9999/oauth/user
+      
 zuul:
   ignoredServices: "*"
   prefix: /api

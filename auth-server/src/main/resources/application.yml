@@ -1,0 +1,28 @@
+endpoints:
+  restart:
+    enabled: true
+  shutdown:
+    enabled: true
+
+server:
+  port: 9999
+#  ssl:
+#    key-store: classpath:server.jks
+#    key-store-password: password
+#    key-password: password
+  contextPath : /oauth
+
+logging:
+  level:
+    ROOT: WARN
+    
+security:
+  user:
+    name: user 
+    password: password
+  oauth2:
+    client:
+      clientId: foo
+      clientSecret: bar
+      authorized-grant-types: authorization_code,refresh_token,implicit,password,client_credentials
+      scope : webshop

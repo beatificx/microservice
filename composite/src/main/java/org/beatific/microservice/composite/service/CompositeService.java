@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Produces(APPLICATION_JSON)
@@ -56,6 +58,7 @@ public class CompositeService {
         return uri;
     }
 	
+	@HystrixCommand(fallbackMethod = "defaultProductAndPoint")
 	@RequestMapping("/get")
 	 public ProductAndPoint getProductAndPoint() {
 
@@ -76,4 +79,8 @@ public class CompositeService {
 
         return pap;
     }
+	
+	public ProductAndPoint defaultProductAndPoint() {
+		return new ProductAndPoint(2L, "product", 100L, 3L, "kks", 100L);
+	}
 }
