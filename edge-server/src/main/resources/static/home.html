@@ -1,0 +1,17 @@
+<h1>Greeting</h1>
+<div ng-show="authenticated">
+    <h2>Service</h2>
+	<p>Product : {{controller.product.name}}</p>
+	<p>Price : {{controller.product.price}}</p>
+	<p>User : {{controller.user.name}}</p>
+	<p>Point : {{controller.user.point}}</p>
+	
+	<h2>Composite Service</h2>
+	<p>Product : {{controller.composite.productName}}</p>
+	<p>Price : {{controller.composite.price}}</p>
+	<p>User : {{controller.composite.userName}}</p>
+	<p>Point : {{controller.composite.point}}</p>
+</div>
+<div  ng-show="!authenticated">
+	<p>Login to see your greeting</p>
+</div>

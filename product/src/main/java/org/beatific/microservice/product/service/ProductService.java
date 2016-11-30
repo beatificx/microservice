@@ -16,7 +16,7 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 public class ProductService {
 	
 	@HystrixCommand
-	@RequestMapping("/get")
+	@RequestMapping("/")
     public Product get() {
 		return new Product(1L, "tv", 1000L);
     }

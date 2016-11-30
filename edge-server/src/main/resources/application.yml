@@ -1,5 +1,5 @@
 server:
-  port: 8765
+  port: 8080
 
 info:
   component: Edge Server
@@ -22,17 +22,42 @@ endpoints:
     sensitive: false
 
 security:
+  user:
+     password: password
   oauth2:
+    client:
+      clientId: acme
+      clientSecret: acmesecret
+      access-token-uri: http://localhost:9999/uaa/oauth/token
+      user-authorization-uri: http://localhost:9999/uaa/oauth/authorize
     resource:
-      userInfoUri: https://localhost:9999/oauth/user
-      
+      jwt:
+        keyValue: |
+          -----BEGIN PUBLIC KEY-----
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAowHcWrnVKh/DPjwI7awu
+          fCc2BrH7IBcu4IQewKX64lXXyHOHBzj9/vQGy6+YM6Wy1rzTfymz55EwzB7+z7uX
+          WBjZvMDgmwc8+SoCKd5qKfhXFPu3sbES0xmYEDO18xNrtv2It+K1A6gPQG2YjfrL
+          vRk3RDzM2YvUI+BSCefXNJX1pw+OLoJ99Bbp7J4sE3mj2rT0OkW++xLf4ZZ3MKxZ
+          PIdD/71ASotFgIxu7l5b/Kau/6z3yugn7bHwHecHBI68yiB7+z1/da6Xhx6qg8YM
+          qpk4luX9Sfz1OvrltTFFtDOL5jAHPOnV1OcsIHmBL6tVyP5qXBJgU4myG34nOGf9
+          ewIDAQAB
+          -----END PUBLIC KEY-----
+    authorization:
+      check-token-access: isAuthenticated() 
+
 zuul:
   ignoredServices: "*"
-  prefix: /api
   routes:
     product-service: 
       path: /product/**
-    point-service: 
+    point-service:
       path: /point/**
     composite-service:
       path:  /composite/**
+    user:
+      path: /user/**
+      url: http://localhost:9999/uaa/user
+    edge :
+      path: /resource/**
+      url: http://localhost:9000
+    

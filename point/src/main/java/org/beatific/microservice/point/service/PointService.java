@@ -16,7 +16,7 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 public class PointService {
 	
 	@HystrixCommand
-	@RequestMapping("/get")
+	@RequestMapping("/")
     public Point get() {
 		return new Point(1L, "name", 1000L);
     }
