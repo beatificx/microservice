@@ -4,19 +4,67 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://150.28.66.46:8761/eureka/
   instance:
     preferIpAddress: true
 
 ribbon:
   eureka:
     enabled: true
+  # Interval to refresh the server list from the source
+  serverListRefreshInterval: 1000
+
+  # Max number of retries on the same server (excluding the first try)
+  maxAutoRetries: 1
+
+  # Max number of next servers to retry (excluding the first server)
+  maxAutoRetriesNextServer: 1
+
+  # Interval to refresh the server list from the source
+  ServerListRefreshInterval: 1000
+
+  # Max number of retries on the same server (excluding the first try)
+  MaxAutoRetries: 1
+
+  # Max number of next servers to retry (excluding the first server)
+  MaxAutoRetriesNextServer: 1
+
+#
+#  # Connect timeout used by Apache HttpClient
+#  connectTimeout: 100
+#
+#  # Read timeout used by Apache HttpClient
+#  readTimeout: 10000
+#
+#  ConnectTimeout: 100
+#  ReadTimeout: 3000
+
+hystrix:
+  threadpool:
+    default:
+      # Maximum number of concurrent requests when using thread pools (Default: 10)
+      coreSize: 100
+      # Maximum LinkedBlockingQueue size - -1 for using SynchronousQueue (Default: -1)
+      maxQueueSize: -1
+      # Queue size rejection threshold (Default: 5)
+      queueSizeRejectionThreshold: 5
+  command:
+    default:
+      circuitBreaker:
+        sleepWindowInMilliseconds: 30000
+        requestVolumeThreshold: 3
+      execution:
+        isolation:
+#          strategy: SEMAPHORE, no thread pool but timeout handling stops to work
+          strategy: THREAD
+          thread:
+            timeoutInMilliseconds: 4000
     
 security:
   sessions: NEVER
   oauth2:
     resource:
-      userInfoUri: http://localhost:9999/uaa/user
+      userInfoUri: http://150.28.66.46:9999/uaa/user
       jwt:
         keyValue : 
           -----BEGIN PUBLIC KEY-----

@@ -1,5 +1,14 @@
 server:
   port: 8080
+  tomcat:
+    protocol-header: x-forwarded-proto
+#    protocol-header-https-value: https
+    remote-ip-header: x-forwarded-for
+  use:
+    forward-headers : true
+    
+    
+       
 
 info:
   component: Edge Server
@@ -11,7 +20,7 @@ eureka:
     registerWithEureka: true
     fetchRegistry: true
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://150.28.66.46:8761/eureka/
 
 endpoints:
   restart:
@@ -28,8 +37,8 @@ security:
     client:
       clientId: acme
       clientSecret: acmesecret
-      access-token-uri: http://localhost:9999/uaa/oauth/token
-      user-authorization-uri: http://localhost:9999/uaa/oauth/authorize
+      access-token-uri: http://150.28.66.46:9999/uaa/oauth/token
+      user-authorization-uri: http://150.28.66.46:9999/uaa/oauth/authorize
     resource:
       jwt:
         keyValue: |
@@ -54,10 +63,16 @@ zuul:
       path: /point/**
     composite-service:
       path:  /composite/**
+    service-container:
+      path: /service/**
     user:
       path: /user/**
-      url: http://localhost:9999/uaa/user
-    edge :
-      path: /resource/**
-      url: http://localhost:9000
+      url: http://150.28.66.46:9999/uaa/user
+#    edge :
+#      path: /resource/**
+#      url: http://localhost:9000
+
+#logging:
+#  level: 
+#    ROOT : DEBUG
     

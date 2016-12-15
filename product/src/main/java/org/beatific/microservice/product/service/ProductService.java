@@ -8,16 +8,14 @@ import javax.ws.rs.Produces;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-
 @Produces(APPLICATION_JSON)
 @Consumes(APPLICATION_JSON)
 @RestController
 public class ProductService {
 	
-	@HystrixCommand
 	@RequestMapping("/")
     public Product get() {
+		
 		return new Product(1L, "tv", 1000L);
     }
 }

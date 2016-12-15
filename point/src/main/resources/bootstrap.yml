@@ -1,6 +1,6 @@
 spring:
   application:
-    name: point-service
+    name: point-service-${version}
   cloud:
     config:
-      uri: http://localhost:8888
+      uri: http://150.28.66.46:8888

@@ -11,3 +11,10 @@ eureka:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
 
 spring.cloud.config.discovery.enabled: true
+
+#logging:
+#  level: 
+#    ROOT : DEBUG
+#    org.springframework.web : DEBUG
+    
+    

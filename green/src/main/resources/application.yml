@@ -1,0 +1,9 @@
+server:
+  port: 8081
+  tomcat:
+    protocol-header: x-forwarded-proto
+#    protocol-header-https-value: https
+    remote-ip-header: x-forwarded-for
+  use:
+    forward-headers : true
+    

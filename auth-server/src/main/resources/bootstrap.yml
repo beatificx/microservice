@@ -3,4 +3,4 @@ spring:
     name: auth-server
   cloud:
     config:
-      uri: http://localhost:8888
+      uri: http://150.28.66.46:8888

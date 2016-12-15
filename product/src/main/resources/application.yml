@@ -4,9 +4,10 @@ server:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://150.28.66.46:8761/eureka/
   instance:
     preferIpAddress: true
+    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
 
 ribbon:
   eureka:
@@ -16,7 +17,7 @@ security:
   sessions: NEVER
   oauth2:
     resource:
-      userInfoUri: http://localhost:9999/uaa/user
+      userInfoUri: http://150.28.66.46:9999/uaa/user
       jwt:
         keyValue : 
           -----BEGIN PUBLIC KEY-----
