@@ -1,6 +1,5 @@
 spring:
   application:
-    #name: point-service-${version}
     name: point-service
   cloud:
     config:

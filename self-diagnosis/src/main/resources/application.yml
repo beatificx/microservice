@@ -1,5 +1,5 @@
 server:
-  port: 8000
+  port: 0
   
 eureka:
   client:
@@ -7,7 +7,6 @@ eureka:
       defaultZone: http://150.28.66.46:8761/eureka/
   instance:
     preferIpAddress: true
-    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
 
 ribbon:
   eureka:
@@ -29,8 +28,3 @@ security:
           qpk4luX9Sfz1OvrltTFFtDOL5jAHPOnV1OcsIHmBL6tVyP5qXBJgU4myG34nOGf9
           ewIDAQAB
           -----END PUBLIC KEY-----
-          
-#logging:
-#  level: 
-#    ROOT : DEBUG
-#    org.springframework.web : DEBUG
