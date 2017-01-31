@@ -67,7 +67,7 @@
 		</dependency>
 		<dependency>
 		    <groupId>org.beatific</groupId>
-		    <artifactId>eureka-unregistry</artifactId>
+		    <artifactId>service-monitor</artifactId>
 		    <version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>

@@ -1,21 +1,11 @@
 package org.beatific.microservice.container.executor;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.beatific.microservice.container.instance.Instance;
 import org.beatific.microservice.container.instance.InstanceFinder;
-import org.beatific.microservice.container.instance.InstancePool;
-import org.beatific.microservice.container.repository.RepositoryException;
-import org.beatific.microservice.container.service.Service;
+import org.beatific.microservice.container.instance.InstancePhysicalManager;
+import org.beatific.microservice.container.service.ServicePool;
+import org.beatific.microservice.container.utils.CopyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.stereotype.Component;
-
-import com.netflix.appinfo.ApplicationInfoManager;
-import com.netflix.appinfo.InstanceInfo;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,65 +14,21 @@ import lombok.extern.slf4j.Slf4j;
 public class AtLeastOneWatchdog implements Watchdog {
 
 	@Autowired
-	ApplicationInfoManager manager;
+	InstancePhysicalManager physicalManager;
+	
+	@Autowired
+	ServicePool servicePool;
+	
+	@Autowired
+	InstanceFinder finder;
 	
 	@Override
-	public void watch(Map<String, Service> servicePool, InstancePool instancePool, InstanceFinder finder, Executor executor) {
+	public void watch() {
 		
-		InstanceInfo info = manager.getInfo();
-		log.error("instanceid [{}]", info.getInstanceId());
-		log.error("appname [{}]", info.getAppName());
-		log.error("id [{}]", info.getId());
+		log.debug("services {}", servicePool.services());
 		
-		Instance instance = null;
-
-		for (Service service : servicePool.values()) {
-			log.info("service {}", service);
-			List<ServiceInstance> serviceInstances = finder.getAllInstaces(service.getServiceName());
-			log.info("service name [{}], instances [{}], instance size [{}]", service.getServiceName(), serviceInstances,
-					serviceInstances.size());
-			if (serviceInstances.size() == 0) {
-				try {
-					int pid = executor.execute(service.getStartCommand());
-					List<Instance> instances = new ArrayList<>();;
-					while (instances.size() == 0) {
-						try {
-							Thread.sleep(500);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-						instances = finder.getAllInstaceInfos(service.getServiceName());
-						log.error("instances {}", instances);
-						
-					}
-					
-					if(instances.size() == 1) {
-						log.error("search instances {}", instances);
-						instance = instances.get(0);
-						
-					} else {
-						
-						for(Instance ins : instances) {
-							if(instancePool.get(ins.getUri()) == null) {
-								instance = ins;
-								break;
-							}
-						}
-					}
-
-					instance.setService(service);
-					instance.setPid(pid);
-
-					instancePool.register(instance);
-
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (RepositoryException e) {
-					// kill instance
-				}
-			}
-		}
-
+		CopyUtils.copy(servicePool.services()).stream().parallel().filter(s -> finder.getAllInstaces(s.getServiceName()).size() == 0).forEach(s -> physicalManager.invoke(s));
+		//parallel의 경우 filter앞에 써도 foreach까지 적용되는지 확인이 필요함 / 향후 두개 이상의 서비스 등록으로 테스트 필요
+		
 	}
-
 }

@@ -1,10 +1,9 @@
-package org.beatific.microservice.container.instance;
+package org.beatific.microservice.monitor.service.instance;
 
 import java.io.Serializable;
+import java.lang.management.ManagementFactory;
 import java.net.URI;
 import java.util.Map;
-
-import org.beatific.microservice.container.service.Service;
 
 import com.netflix.appinfo.InstanceInfo;
 
@@ -23,8 +22,6 @@ public class Instance implements Serializable {
 	private Map<String, String> metadata;
 	private String serviceName;
 	
-	private Service service;
-	
 	public Instance() {}
 	
 	public Instance(InstanceInfo info) {
@@ -38,6 +35,8 @@ public class Instance implements Serializable {
 		String scheme = isSecure() ? "https" : "http";
 		String url = String.format("%s://%s:%s", scheme, getHost(), getPort());
 		uri = URI.create(url);
+		String name = ManagementFactory.getRuntimeMXBean().getName();
+		pid = Integer.parseInt(name.substring(0, name.indexOf("@")));
 		
 	}
 }

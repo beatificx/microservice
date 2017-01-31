@@ -7,6 +7,7 @@ import org.beatific.microservice.container.service.Service;
 
 public interface Judge {
 
+	public void init();
 	public void cooldown(List<Instance> instances);
 	public void entrust(Service service);
 	public void take(String serviceName);

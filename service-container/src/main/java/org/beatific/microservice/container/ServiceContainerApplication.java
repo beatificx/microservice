@@ -30,7 +30,7 @@ public class ServiceContainerApplication {
 
 		@Bean(destroyMethod = "shutdown")
 		public Executor taskExecutor() {
-			return Executors.newScheduledThreadPool(2);
+			return Executors.newScheduledThreadPool(3);
 		}
 	}
 }

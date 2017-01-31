@@ -2,9 +2,12 @@ package org.beatific.microservice.container.executor;
 
 import java.io.IOException;
 
+import org.springframework.stereotype.Component;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Component
 public class DreddExecutor extends Executor {
 
 	@Override

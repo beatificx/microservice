@@ -68,6 +68,9 @@ public abstract class ServiceContainer extends ObjectRepository<Map<String, Serv
 			for(Service service: container.values()) {
 				judge.entrust(service);
 			}
+			
+			judge.init();
+			
 		} catch (RepositoryException e) {
 			throw new RuntimeException(e);
 		}

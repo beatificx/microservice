@@ -3,6 +3,7 @@ package org.beatific.microservice.container.instance;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
@@ -50,18 +51,7 @@ public class InstanceFinder {
 
 		if (info == null) return null;
 
-		Instance instance = new Instance();
-		instance.setHost(info.getHostName());
-		instance.setInstanceId(info.getInstanceId());
-		instance.setMetadata(info.getMetadata());
-		instance.setSecure(false);
-		instance.setPort(instance.isSecure() ? info.getSecurePort() : info.getPort());
-		instance.setServiceName(info.getAppName().toLowerCase());
-		String scheme = (instance.isSecure()) ? "https" : "http";
-		String uri = String.format("%s://%s:%s", scheme, instance.getHost(), instance.getPort());
-		instance.setUri(URI.create(uri));
-
-		return instance;
+		return  new Instance(info);
 	}
 
 	public List<Instance> getAllInstaceInfos(String serviceName) {
@@ -74,31 +64,15 @@ public class InstanceFinder {
 
 		 List<Instance> instances = new ArrayList<>();
 
-		 infos.forEach((InstanceInfo info) -> {
-			Instance instance = new Instance();
-			instance.setHost(info.getHostName());
-			instance.setInstanceId(info.getInstanceId());
-			instance.setMetadata(info.getMetadata());
-			instance.setSecure(false);
-			instance.setPort(instance.isSecure() ? info.getSecurePort() : info.getPort());
-			instance.setServiceName(info.getAppName().toLowerCase());
-			String scheme = (instance.isSecure()) ? "https" : "http";
-			String uri = String.format("%s://%s:%s", scheme, instance.getHost(), instance.getPort());
-			instance.setUri(URI.create(uri));
-			instances.add(instance);
-		 });
+		 infos.forEach(info -> instances.add(new Instance(info)));
 
 		return instances;
 	}
 
 	public List<String> getServiceUrls(String serviceName) {
-		List<String> urls = new ArrayList<String>();
 
-		discoveryClient.getInstances(serviceName).forEach((ServiceInstance instance) -> {
-			urls.add(instance.getUri().toString());
-		});
+		return discoveryClient.getInstances(serviceName).stream().map(instance -> instance.getUri().toString()).collect(Collectors.toList());
 
-		return urls;
 	}
 
 }

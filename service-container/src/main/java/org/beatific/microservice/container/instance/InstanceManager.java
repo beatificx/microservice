@@ -7,7 +7,7 @@ public class InstanceManager {
 	@Autowired
 	private DiscoveryRegistry registry;
 	
-	private InstanceInvoker invoker;
+	private InstancePhysicalManager invoker;
 
 	public void unregister(String serviceName) {
 		registry.tagServices(serviceName);

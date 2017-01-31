@@ -1,6 +1,6 @@
 package org.beatific.microservice.container.executor;
 
-public interface Watchdog {
+public enum ExecuteFactor {
 
-	public void watch();
+	UP, DOWN, KEEP;
 }

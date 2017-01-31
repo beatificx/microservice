@@ -10,9 +10,14 @@ public interface ServiceMonitor {
 
 	public ServiceStatus monitor(Service service);
 	
+	public ServiceStatus monitor(String serviceName);
+	
 	public ServiceStatus monitor(Instance instance);
 	
 	public ServiceStatus monitor(List<Instance> instance);
 	
 	public ServiceStatus monitor(Machine instance);
+	
+	public List<Instance> reduceInstances(String serviceName, Integer count);
+	
 }

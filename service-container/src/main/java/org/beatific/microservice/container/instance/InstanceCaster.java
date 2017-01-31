@@ -30,18 +30,42 @@ public class InstanceCaster<T> {
 	private AsyncRestOperations aRestTemplate = new AsyncRestTemplate();
 	
 	public T cast(String serviceName) {
-		URI url = finder.getServiceUrl(serviceName);
-		return restTemplate.getForObject(url, typeParameterClass);
+		URI uri = finder.getServiceUrl(serviceName);
+		return cast(uri);
 	}
 
 	public T cast(String serviceName, Object... paramArrayOfObject) {
-		URI url = finder.getServiceUrl(serviceName);
-		return restTemplate.getForObject(url.toString(), typeParameterClass, paramArrayOfObject);
+		URI uri = finder.getServiceUrl(serviceName);
+		return cast(uri, paramArrayOfObject);
 	}
 
 	public T cast(String serviceName, Map<String, ?> paramMap) {
-		URI url = finder.getServiceUrl(serviceName);
-		return restTemplate.getForObject(url.toString(), typeParameterClass, paramMap);
+		URI uri = finder.getServiceUrl(serviceName);
+		return cast(uri, paramMap);
+	}
+	
+	public T cast(URI uri) {
+		return restTemplate.getForObject(uri, typeParameterClass);
+	}
+	
+	public T cast(URI uri, Object... paramArrayOfObject) {
+		return restTemplate.getForObject(uri.toString(), typeParameterClass, paramArrayOfObject);
+	}
+	
+	public T cast(URI uri, Map<String, ?> paramMap) {
+		return restTemplate.getForObject(uri.toString(), typeParameterClass, paramMap);
+	}
+	
+	public T cast(String url, String path) {
+		return restTemplate.getForObject(url + path, typeParameterClass);
+	}
+	
+	public T cast(String url, String path, Object... paramArrayOfObject) {
+		return restTemplate.getForObject(url + path, typeParameterClass, paramArrayOfObject);
+	}
+	
+	public T cast(String url, String path, Map<String, ?> paramMap) {
+		return restTemplate.getForObject(url + path, typeParameterClass, paramMap);
 	}
 
 	public List<T> multiCast(String serviceName) {
