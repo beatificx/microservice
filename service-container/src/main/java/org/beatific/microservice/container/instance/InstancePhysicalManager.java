@@ -55,7 +55,7 @@ public class InstancePhysicalManager {
 			while (instance == null) {
 
 				try {
-					Thread.sleep(500);
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -67,7 +67,7 @@ public class InstancePhysicalManager {
 							return ins;
 						}).findFirst().orElse(null);
 
-				log.debug("Finded service name {}, instance {}", service.getServiceName(), instance);
+				log.debug("Finded service pid {}, name {}, instance {}", pid, service.getServiceName(), instance);
 
 			}
 

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 
 import org.beatific.microservice.container.repository.ObjectRepository;
 import org.beatific.microservice.container.repository.RepositoryException;
@@ -48,8 +49,7 @@ public abstract class InstancePool extends ObjectRepository<Map<URI, Instance>> 
 
 		for (Instance instance : instances) {
 
-			if (!savedInstances.containsKey(instance.getUri())) {
-
+			if(!exists(instance.getInstanceId(), savedInstances.values())) {
 				try {
 					Instance ins = caster.cast(instance.getUri().toString(), "/instance");
 					Service service = servicePool.get(instance.getServiceName());
@@ -59,24 +59,30 @@ public abstract class InstancePool extends ObjectRepository<Map<URI, Instance>> 
 				} catch (Exception ex) {
 				}
 			}
+			
 		}
 
 		for (Entry<URI, Instance> entry : savedInstances.entrySet()) {
 			
-			if (existsInEureka(entry.getKey(), instances)) {
+			if (exists(entry.getValue().getInstanceId(), instances)) {
 				
 				innerRegister(entry.getValue());
 				
 			} else {
-				
+				log.debug("deadPool {}", deadPool);
 				deadPool.add(entry.getValue());
 			}
 		}
 	}
 
-	private synchronized boolean existsInEureka(URI uri, List<Instance> instances) {
+//	private synchronized boolean existsInEureka(URI uri, List<Instance> instances) {
+//		
+//		return instances.stream().filter(i -> i.getUri().equals(uri)).count() > 0;
+//	}
+	
+    private synchronized boolean exists(String instanceId, Collection<Instance> instances) {
 		
-		return instances.stream().filter(i -> i.getUri().equals(uri)).count() > 0;
+		return instances.stream().filter(i -> i.getInstanceId().equals(instanceId)).count() > 0;
 	}
 	
 	public void zombie(Instance instance) {

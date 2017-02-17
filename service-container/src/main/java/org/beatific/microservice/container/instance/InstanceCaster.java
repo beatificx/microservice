@@ -4,7 +4,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.beatific.microservice.container.utils.CopyUtils;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.concurrent.ListenableFuture;
@@ -14,7 +16,9 @@ import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class InstanceCaster<T> {
 
     private final Class<T> typeParameterClass;
@@ -70,146 +74,46 @@ public class InstanceCaster<T> {
 
 	public List<T> multiCast(String serviceName) {
 
-		List<T> resultList = new ArrayList<T>();
-
-		for (ServiceInstance instance : finder.getAllInstaces(serviceName)) {
-			ListenableFuture<ResponseEntity<T>> future = aRestTemplate.getForEntity(instance.getUri().toString(),
-					typeParameterClass);
-			future.addCallback(result -> {
-				resultList.add(result.getBody());
-			}, ex -> {
-			});
-		}
-
-		return resultList;
+		return finder.getAllInstaces(serviceName).parallelStream().map(instance -> restTemplate.getForObject(instance.getUri().toString(), typeParameterClass)).collect(Collectors.toList());
 	}
 
 	public List<T> multiCast(String serviceName, Object... paramArrayOfObject) {
 
-		List<T> resultList = new ArrayList<T>();
-
-		for (ServiceInstance instance : finder.getAllInstaces(serviceName)) {
-			ListenableFuture<ResponseEntity<T>> future = aRestTemplate.getForEntity(instance.getUri().toString(),
-					typeParameterClass, paramArrayOfObject);
-			future.addCallback(result -> {
-				resultList.add(result.getBody());
-			}, ex -> {
-			});
-		}
-
-		return resultList;
+		return finder.getAllInstaces(serviceName).parallelStream().map(instance -> restTemplate.getForObject(instance.getUri().toString(), typeParameterClass, paramArrayOfObject)).collect(Collectors.toList());
 	}
 
 	public List<T> multiCast(String serviceName, Map<String, ?> paramMap) {
 
-		List<T> resultList = new ArrayList<T>();
-
-		for (ServiceInstance instance : finder.getAllInstaces(serviceName)) {
-			ListenableFuture<ResponseEntity<T>> future = aRestTemplate.getForEntity(instance.getUri().toString(),
-					typeParameterClass, paramMap);
-			future.addCallback(result -> {
-				resultList.add(result.getBody());
-			}, ex -> {
-			});
-		}
-
-		return resultList;
+		return finder.getAllInstaces(serviceName).parallelStream().map(instance -> restTemplate.getForObject(instance.getUri().toString(), typeParameterClass, paramMap)).collect(Collectors.toList());
 	}
 
 	public List<T> multiCast(String serviceName, String path) {
 
-		List<T> resultList = new ArrayList<T>();
-
-		for (ServiceInstance instance : finder.getAllInstaces(serviceName)) {
-			ListenableFuture<ResponseEntity<T>> future = aRestTemplate.getForEntity(instance.getUri().toString() + path,
-					typeParameterClass);
-			future.addCallback(result -> {
-				resultList.add(result.getBody());
-			}, ex -> {
-				System.out.println();
-			});
-		}
-
-		return resultList;
+		return finder.getAllInstaces(serviceName).parallelStream().map(instance -> restTemplate.getForObject(instance.getUri().toString() + path, typeParameterClass)).collect(Collectors.toList());
 	}
 
 	public List<T> multiCast(String serviceName, String path, Object... paramArrayOfObject) {
 
-		List<T> resultList = new ArrayList<T>();
-
-		for (ServiceInstance instance : finder.getAllInstaces(serviceName)) {
-			ListenableFuture<ResponseEntity<T>> future = aRestTemplate.getForEntity(instance.getUri().toString() + path,
-					typeParameterClass, paramArrayOfObject);
-			future.addCallback(result -> {
-				resultList.add(result.getBody());
-			}, ex -> {
-			});
-		}
-
-		return resultList;
+		return finder.getAllInstaces(serviceName).parallelStream().map(instance -> restTemplate.getForObject(instance.getUri().toString() + path, typeParameterClass, paramArrayOfObject)).collect(Collectors.toList());
 	}
 
 	public List<T> multiCast(String serviceName, String path, Map<String, ?> paramMap) {
 
-		List<T> resultList = new ArrayList<T>();
-
-		for (ServiceInstance instance : finder.getAllInstaces(serviceName)) {
-			ListenableFuture<ResponseEntity<T>> future = aRestTemplate.getForEntity(instance.getUri().toString() + path,
-					typeParameterClass, paramMap);
-			future.addCallback(result -> {
-				resultList.add(result.getBody());
-			}, ex -> {
-			});
-		}
-
-		return resultList;
+		return finder.getAllInstaces(serviceName).parallelStream().map(instance -> restTemplate.getForObject(instance.getUri().toString() + path, typeParameterClass, paramMap)).collect(Collectors.toList());
 	}
 	
 	public List<T> multiCast(List<String> urls, String path) {
 
-		List<T> resultList = new ArrayList<T>();
-
-		for (String url : urls) {
-			ListenableFuture<ResponseEntity<T>> future = aRestTemplate.getForEntity(url + path,
-					typeParameterClass);
-			future.addCallback(result -> {
-				resultList.add(result.getBody());
-			}, ex -> {
-			});
-		}
-
-		return resultList;
+		return CopyUtils.copy(urls).parallelStream().map(url -> restTemplate.getForObject(url + path, typeParameterClass)).collect(Collectors.toList());
 	}
 
 	public List<T> multiCast(List<String> urls, String path, Object... paramArrayOfObject) {
 
-		List<T> resultList = new ArrayList<T>();
-
-		for (String url : urls) {
-			ListenableFuture<ResponseEntity<T>> future = aRestTemplate.getForEntity(url + path,
-					typeParameterClass, paramArrayOfObject);
-			future.addCallback(result -> {
-				resultList.add(result.getBody());
-			}, ex -> {
-			});
-		}
-
-		return resultList;
+		return CopyUtils.copy(urls).parallelStream().map(url -> restTemplate.getForObject(url + path, typeParameterClass)).collect(Collectors.toList());
 	}
 
 	public List<T> multiCast(List<String> urls, String path, Map<String, ?> paramMap) {
 
-		List<T> resultList = new ArrayList<T>();
-
-		for (String url : urls) {
-			ListenableFuture<ResponseEntity<T>> future = aRestTemplate.getForEntity(url + path,
-					typeParameterClass, paramMap);
-			future.addCallback(result -> {
-				resultList.add(result.getBody());
-			}, ex -> {
-			});
-		}
-
-		return resultList;
+		return CopyUtils.copy(urls).parallelStream().map(url -> restTemplate.getForObject(url + path, typeParameterClass, paramMap)).collect(Collectors.toList());
 	}
 }

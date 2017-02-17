@@ -27,7 +27,7 @@ public class RequestFilter implements Filter  {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
 			throws IOException, ServletException {
 		
-		if(!((HttpServletRequest)request).getRequestURL().toString().matches("*" + EXCEPTION + "*")) {
+		if(!((HttpServletRequest)request).getRequestURL().toString().matches(EXCEPTION)) {
 			holder.hold();
 			StatusServletResponse statusResponse = new StatusServletResponse((HttpServletResponse)response);
 			filterChain.doFilter(request, statusResponse);

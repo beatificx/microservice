@@ -7,32 +7,31 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.beatific.microservice.container.utils.CalendarUtils;
-import org.mortbay.log.Log;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class InstanceStatistics {
 
-	private Integer totalRequests;
+	private Integer totalRequests = 0;
 
-	private Integer averageRequestPerSeconds;
+//	private Integer averageRequestPerSeconds;
 
-	private Integer transactionPerSeconds;
+	private Integer transactionPerSeconds = 0;
 
-	private Map<Integer, Integer> requestPerHours;
+	private Map<Integer, Integer> requestPerHours = new HashMap<>();
 
-	private Integer totalDays;
-	private Map<Integer, Integer> todayRequestPerHours;
+	private Integer totalDays = 0;
+	private Map<Integer, Integer> todayRequestPerHours = new HashMap<>();
 
-	private Map<Integer, Integer> failRateCollectCounts;
-	private Map<Integer, Integer> requestPerFailRate;
+	private Map<Integer, Integer> failRateCollectCounts = new HashMap<>();
+	private Map<Integer, Integer> requestPerFailRate = new HashMap<>();
 
-	private Map<Integer, Integer> memoryCollectCounts;
-	private Map<Integer, Integer> requestPerMemory;
+	private Map<Integer, Integer> memoryCollectCounts = new HashMap<>();
+	private Map<Integer, Integer> requestPerMemory = new HashMap<>();
 
-	private Map<Integer, Integer> failRatePerMemory;
-	private Map<Integer, Integer> memoryPerFailRate;
+	private Map<Integer, Integer> failRatePerMemory = new HashMap<>();
+	private Map<Integer, Integer> memoryPerFailRate = new HashMap<>();
 	
 	public void collect(Integer total, Integer tps, Integer fail, Integer memory) {
 		Integer previousTotal = totalRequests;
@@ -42,8 +41,8 @@ public class InstanceStatistics {
 
 		Calendar today = Calendar.getInstance();
 		Integer hour = today.get(Calendar.HOUR_OF_DAY);
-		if (todayRequestPerHours == null)
-			todayRequestPerHours = new HashMap<>();
+//		if (todayRequestPerHours == null)
+//			todayRequestPerHours = new HashMap<>();
 		Integer request = todayRequestPerHours.get(hour);
 		if (request == null) {
 			Integer beforeHour = CalendarUtils.addHours(today, -1).get(Calendar.HOUR_OF_DAY);
@@ -57,7 +56,10 @@ public class InstanceStatistics {
 		
 		todayRequestPerHours.put(hour, request + total);
 
-		int failRate = total == 0 ? 0 : fail / total * 1000;
+		System.out.println("hour [" + hour +"] request [" + request + "] total [" + total + "] fail [" + fail + "]");
+		int failRate = total == 0 ? 0 : fail / total * 1000000;
+		
+		System.out.println("failRate [" + failRate + "]");
 
 		int failCount = collectStatistics(failRateCollectCounts, failRate, () -> 0, previous -> previous + 1);
 		collectStatistics(requestPerFailRate, failRate, () -> 0, previous -> (previous + total) / failCount);
@@ -79,7 +81,7 @@ public class InstanceStatistics {
 
 	private <T, R> R collectStatistics(Map<T, R> map, T key, Supplier<R> previousInitial, Function<R, R> updateValue) {
 
-		if (map == null) map = new HashMap<>();
+//		if (map == null) map = new HashMap<>();
 		
 		R previous = map.get(key);
 		if (previous == null) previous = previousInitial.get();
@@ -92,20 +94,19 @@ public class InstanceStatistics {
 	}
 	
 	public Integer countByFailRate(Integer failRate) {
-		return failRateCollectCounts == null ? 0 : failRateCollectCounts.get(failRate);
+        return failRateCollectCounts == null || !failRateCollectCounts.containsKey(failRate) ? 0 : failRateCollectCounts.get(failRate);
 	}
 	
     public Integer memoryByFailRate(Integer failRate) {
-    	return memoryPerFailRate == null ? 0 : memoryPerFailRate.get(failRate);
+    	return memoryPerFailRate == null || !memoryPerFailRate.containsKey(failRate) ? 0 : memoryPerFailRate.get(failRate);
 	}
     
     public Integer requestByMemory(Integer memory) {
-    	return requestPerMemory == null ? 0 : requestPerMemory.get(memory);
+    	return requestPerMemory == null || !requestPerMemory.containsKey(memory) ? 0 : requestPerMemory.get(memory);
 	}
 	
 	public void analyze() {
-		log.debug("InstanceStatistics [totalRequests=" + totalRequests + ", averageRequestPerSeconds="
-				+ averageRequestPerSeconds + ", transactionPerSeconds=" + transactionPerSeconds + ", requestPerHours="
+		log.debug("InstanceStatistics [totalRequests=" + totalRequests + ", transactionPerSeconds=" + transactionPerSeconds + ", requestPerHours="
 				+ requestPerHours + ", totalDays=" + totalDays + ", todayRequestPerHours=" + todayRequestPerHours
 				+ ", failRateCollectCounts=" + failRateCollectCounts + ", requestPerFailRate=" + requestPerFailRate
 				+ ", memoryCollectCounts=" + memoryCollectCounts + ", requestPerMemory=" + requestPerMemory

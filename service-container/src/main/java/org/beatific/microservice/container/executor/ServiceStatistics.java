@@ -9,8 +9,10 @@ import java.util.function.Supplier;
 
 import org.beatific.microservice.container.monitor.InstanceStatus;
 import org.beatific.microservice.container.utils.CalendarUtils;
-import org.mortbay.log.Log;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class ServiceStatistics {
 
 	private Integer totalRequests = 0;
@@ -19,17 +21,17 @@ public class ServiceStatistics {
 
 	private Integer transactionPerSeconds = 0;
 
-	private Map<Integer, Integer> requestPerHours;
+	private Map<Integer, Integer> requestPerHours = new HashMap<>();
 
 	private Integer totalDays = 0;
-	private Map<Integer, Integer> todayRequestPerHours;
+	private Map<Integer, Integer> todayRequestPerHours = new HashMap<>();
 
-	private Map<Integer, Integer> failRateCollectCounts;
-	private Map<Integer, Integer> requestPerFailRate;
+	private Map<Integer, Integer> failRateCollectCounts = new HashMap<>();
+	private Map<Integer, Integer> requestPerFailRate = new HashMap<>();
 	
 	private InstanceStatistics istatistics = new InstanceStatistics();
 
-	private static int STANDARD_FAIL_RATE = 10; // 0.1%를 의미함
+	private static int STANDARD_FAIL_RATE = 1; // 0.1%를 의미함
 	private static int AVERAGE_MEMORY_USE_RATE = 70;
 
 	public int collect(Integer total, Integer success, Integer fail, List<InstanceStatus> status) {
@@ -40,8 +42,6 @@ public class ServiceStatistics {
 
 		Calendar today = Calendar.getInstance();
 		Integer hour = today.get(Calendar.HOUR_OF_DAY);
-		if (todayRequestPerHours == null)
-			todayRequestPerHours = new HashMap<>();
 		Integer request = todayRequestPerHours.get(hour);
 		if (request == null) {
 			Integer beforeHour = CalendarUtils.addHours(today, -1).get(Calendar.HOUR_OF_DAY);
@@ -72,7 +72,7 @@ public class ServiceStatistics {
 
 	private <T, R> R collectStatistics(Map<T, R> map, T key, Supplier<R> previousInitial, Function<R, R> updateValue) {
 
-		if (map == null) map = new HashMap<>();
+		log.debug("failRateCollectCounts {}", failRateCollectCounts);
 		
 		R previous = map.get(key);
 		if (previous == null) previous = previousInitial.get();
@@ -86,22 +86,34 @@ public class ServiceStatistics {
 	
 	private int analyze(Integer total, Integer success, Integer fail, List<InstanceStatus> status) {
 		Integer count = istatistics.countByFailRate(STANDARD_FAIL_RATE);
-		Integer cNeeds = count == 0 ? 0 : (int)Math.ceil(total / count);
+		log.debug("fail count[{}]", count);
+		Integer cNeeds = count == 0 ? 1 : (int)Math.ceil(total / count);
 		
 		Integer memory = istatistics.memoryByFailRate(STANDARD_FAIL_RATE);
+		log.debug("fail memory[{}]", memory);
 		Integer memoryPerOne = (memory > AVERAGE_MEMORY_USE_RATE) ? AVERAGE_MEMORY_USE_RATE : memory;
-		Integer mNeeds = memoryPerOne == 0 ? 0 : (int)status.stream().mapToDouble(s -> s.getUsedMemory() / s.getMaxMemory()).average().orElse(0) * status.size() / memoryPerOne;
+		log.debug("memoryPerOne[{}]", memoryPerOne);
+		Integer mNeeds = memoryPerOne == 0 ? 1 : (int)status.stream().mapToDouble(s -> s.getUsedMemory() / s.getMaxMemory()).average().orElse(0) * status.size() / memoryPerOne;
 		 
 		Integer requestPerOne = istatistics.requestByMemory(memoryPerOne);
-		Integer rNeeds = requestPerOne == 0 ? 0 : (int)Math.ceil(total / requestPerOne);
+		Integer rNeeds = requestPerOne == 0 ? 1 : (int)Math.ceil(total / requestPerOne);
 
 		Integer needs = Math.max(Math.max(cNeeds, mNeeds), rNeeds);
 		
-		Log.debug("count[{}], cNeeds[{}]", count, cNeeds);
-		Log.debug("memoryPerOne[{}], mNeeds[{}]", memoryPerOne, mNeeds);
-		Log.debug("requestPerOne[{}], rNeeds[{}]", requestPerOne, rNeeds);
-		Log.debug("needs[{}]", needs);
+		log.debug("count[{}], cNeeds[{}]", count, cNeeds);
+		log.debug("memoryPerOne[{}], mNeeds[{}]", memoryPerOne, mNeeds);
+		log.debug("requestPerOne[{}], rNeeds[{}]", requestPerOne, rNeeds);
+		log.debug("needs[{}]", needs);
 		return needs - status.size();
+	}
+
+	@Override
+	public String toString() {
+		return "ServiceStatistics [totalRequests=" + totalRequests + ", averageRequestPerSeconds="
+				+ averageRequestPerSeconds + ", transactionPerSeconds=" + transactionPerSeconds + ", requestPerHours="
+				+ requestPerHours + ", totalDays=" + totalDays + ", todayRequestPerHours=" + todayRequestPerHours
+				+ ", failRateCollectCounts=" + failRateCollectCounts + ", requestPerFailRate=" + requestPerFailRate
+				+ ", istatistics=" + istatistics + "]";
 	}
 	
 }

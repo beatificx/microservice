@@ -37,6 +37,8 @@ public class ServiceWatchdog {
 			
 			int count = resolver.resolve(name, monitor.monitor(instances));
 			
+			log.debug("count [{}]", count);
+			
 			if(instances.size() + count > 0 ) { 
 			
 				if(count > 0) 

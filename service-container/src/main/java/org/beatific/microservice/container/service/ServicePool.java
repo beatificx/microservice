@@ -8,8 +8,6 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Component
 public class ServicePool  {
 
@@ -17,7 +15,7 @@ public class ServicePool  {
 	
 	List<Service> notRegisteredPool = new ArrayList<>();
 	
-	public Collection<Service> services() {
+	public synchronized Collection<Service> services() {
 		return servicePool.values();
 	}
 	
